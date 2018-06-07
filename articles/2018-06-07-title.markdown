@@ -21,9 +21,13 @@ related:
 
 [Nest.js](https://docs.nestjs.com/) is one framework of Node.js, what makes it special is that it addresses a problem that no other does: the architecture of a Node project. If you have ever tried to build a project using Node.js you may have realised that you can do a lot with one class (for example, a Express Middleware can do from authentication to validation) and projects can grow in a confusing way. Nest addresses this problem by creating classes with few (or single) responsabilities.
 
-One other special thing that Nest brings to Node is the possibility to write the code in TypeScript within the project (if you have never heard about TypeScript, I would recommend reading [this introduction](https://auth0.com/blog/typescript-practical-introduction/) before this article). Angular is written in TypeScript and Nest is highly inspired by Angular's architecture: many elements in Nest have the same name in Angular (for example, guards): so that is because we are going to use Angular together Nest in this tutorial (but the backend application is idependent from the frontend, so you may use your favourite frontend framework to consume the endpoints of this API). 
+One other special thing that Nest brings to Node is the possibility to write the project's code in TypeScript (if you have never heard about TypeScript, I would recommend reading [this introduction](https://auth0.com/blog/typescript-practical-introduction/) before this article), but you may write it JavaScript as well. 
+
+Angular is written in TypeScript and Nest is highly inspired by Angular's architecture: many elements in Nest have the same name in Angular (for example, guards): so that is because we are going to use Angular together Nest in this tutorial (but the backend application built in part 1 is independent from the frontend application built in part 2, so you may use your favourite frontend framework to consume the endpoints of this API). 
 
 ## The app we are building
+
+The app that is going to be created in this tutorial is a simple app of a restaurant's menu, where users may shop items online. In this app any user can see the items of this menu, only identified users may add items to a shopcart and only an Admin user may add new items to the menu.
 
 ## Getting started with Nest
 
