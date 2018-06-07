@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "TypeScript from bottom to top - Part 1: Developing an API with Nest.js"
-description: "Learn how to use TypeScript to create a fullstack web application with Angular (frontend) and Nest (backend)"
+description: "Learn how to use TypeScript to create a Full-stack web application with Angular (frontend) and Nest (backend)"
 date: "2018-06-07 08:30"
 author:
   name: "Ana Ribeiro"
@@ -15,7 +15,7 @@ related:
 - 2017-11-15-an-example-of-all-possible-elements
 ---
 
-**TL;DR:** 
+**TL;DR:** This is a 2 part hands on tutorial on how to build a Full-stack application with TypeScript. On the first part of this tutorial you are going to learn how to build an API with Nest.js,the code built in this part is available on this git repository. Part 2 is going to be about building a frontend application with Angular to consume the endpoints of this API.  
 
 ## What is Nest and why use it with Angular?
 
@@ -23,13 +23,62 @@ related:
 
 One other special thing that Nest brings to Node is the possibility to write the project's code in TypeScript (if you have never heard about TypeScript, I would recommend reading [this introduction](https://auth0.com/blog/typescript-practical-introduction/) before this article), but you may write it JavaScript as well. 
 
-Angular is written in TypeScript and Nest is highly inspired by Angular's architecture: many elements in Nest have the same name in Angular (for example, guards): so that is because we are going to use Angular together Nest in this tutorial (but the backend application built in part 1 is independent from the frontend application built in part 2, so you may use your favourite frontend framework to consume the endpoints of this API). 
+[Angular](https://angular.io/) is written in TypeScript and Nest is highly inspired by Angular: many components in Nest have the same name in Angular (for example, guards), so that is because we are going to use Angular together Nest in this tutorial (but the backend application built in part 1 is independent from the frontend application built in part 2, so you may use your favorite frontend framework to consume the endpoints of this API). 
 
 ## The app we are building
 
 The app that is going to be created in this tutorial is a simple app of a restaurant's menu, where users may shop items online. In this app any user can see the items of this menu, only identified users may add items to a shopcart and only an Admin user may add new items to the menu.
 
 ## Getting started with Nest
+
+To install Nest, first you should install Node and npm. Go to [Node download](https://nodejs.org/en/download/) website and follow the instructions to download and install Node (version >= 8.9.0) and npm to your operating system. When it's done, you can check if everything went well running the following commands:
+
+```bash
+node -v # v.8.9.0
+npm -v # 5.6.0
+```
+
+There are a few ways to start a Nest project, you may check all of them in [Nest documentation](https://docs.nestjs.com/first-steps). Here we are going to use `nest-cli` to do so. Use the following commands in your OS terminal:
+
+```bash
+npm i -g @nestjs/cli # it will install nest-cli
+nest new menu # it will create a project called menu
+```
+
+If everything went well, you will get by the end of this process a directory called `menu` with the following structure:
+
+```bash
+menu
+├── README.md
+├── nodemon.json
+├── package-lock.json
+├── package.json
+├── src
+│   ├── app.controller.spec.ts
+│   ├── app.controller.ts
+│   ├── app.module.ts
+│   ├── app.service.ts
+│   ├── main.hmr.ts
+│   └── main.ts
+├── test
+│   ├── app.e2e-spec.ts
+│   └── jest-e2e.json
+├── tsconfig.json
+├── tslint.json
+└── webpack.config.js
+``` 
+
+You can navigate to this directory and type the following to run the project: 
+
+```bash
+# watch mode
+$ npm run start:dev
+```
+
+And then you can visit with in your browser the address `localhost:3000` and you will get a page like the following one: 
+
+![Hello world webpage](https://i.imgur.com/RZEZJVw.png "Hello World Webpage")
+
 
 ## Creating endpoints
 
