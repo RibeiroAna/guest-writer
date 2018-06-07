@@ -1,0 +1,33 @@
+---
+layout: post
+title: "TypeScript from bottom to top - Part 1: Developing an API with Nest.js"
+description: "Learn how to use TypeScript to create a fullstack web application with Angular (frontend) and Nest (backend)"
+date: "2018-06-07 08:30"
+author:
+  name: "Ana Ribeiro"
+  url: "https://twitter.com/anacosri"
+  mail: "aninhacostaribeiro@gmail.com"
+  avatar: "https://twitter.com/anacosri/profile_image?size=original"
+related:
+- 2017-11-15-an-example-of-all-possible-elements
+---
+
+**TL;DR:** 
+
+## What is Nest and why use it with Angular?
+
+## The app we are building
+
+## Getting started with Nest
+
+## Creating endpoints
+
+## Adding validation with Pipes
+
+## Adding identification with Auth0
+
+### A note about Express/Nest Middlewares
+
+## Adding role authorization with Auth0
+
+
