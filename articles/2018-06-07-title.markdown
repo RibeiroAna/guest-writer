@@ -15,19 +15,19 @@ related:
 - 2017-11-15-an-example-of-all-possible-elements
 ---
 
-**TL;DR:** This is a 2 part hands on tutorial on how to build a Full-stack application with TypeScript. On the first part of this tutorial you are going to learn how to build an API with Nest.js,the code built in this part is available on this git repository. Part 2 is going to be about building a frontend application with Angular to consume the endpoints of this API.  
+**TL;DR:** This is a two part hands on tutorial on how to build a Full-stack application with TypeScript. On the first part of this tutorial, you are going to learn how to build an API with Nest.js,the code for this part [is available on this git repository](). Part two is going to be about building a frontend application with Angular for the backend created here.  
 
 ## What is Nest and why use it with Angular?
 
-[Nest.js](https://docs.nestjs.com/) is one framework of Node.js, what makes it special is that it addresses a problem that no other does: the architecture of a Node project. If you have ever tried to build a project using Node.js you may have realised that you can do a lot with one class (for example, a Express Middleware can do from authentication to validation) and projects can grow in a confusing way. Nest addresses this problem by creating classes with few (or single) responsabilities.
+[Nest.js](https://docs.nestjs.com/) is one framework of Node.js. What makes it special is that it addresses a problem that no other framework does: the architecture of a Node project. If you have ever tried to build a project using Node.js you may have realized that you can do a lot with one class (for example, a Express Middleware can do from authentication to validation) and projects can grow in a confusing way. Nest addresses this problem by creating classes with few (or single) responsibilities.
 
-One other special thing that Nest brings to Node is the possibility to write the project's code in TypeScript (if you have never heard about TypeScript, I would recommend reading [this introduction](https://auth0.com/blog/typescript-practical-introduction/) before this article), but you may write it JavaScript as well. 
+Another special thing that Nest brings to Node is the possibility to write the project's code in TypeScript (if you have never heard about TypeScript, I would recommend reading [this introduction](https://auth0.com/blog/typescript-practical-introduction/) before reading this article).
 
 [Angular](https://angular.io/) is written in TypeScript and Nest is highly inspired by Angular: many components in Nest have the same name in Angular (for example, guards), so that is because we are going to use Angular together Nest in this tutorial (but the backend application built in part 1 is independent from the frontend application built in part 2, so you may use your favorite frontend framework to consume the endpoints of this API). 
 
 ## The app we are building
 
-The app that is going to be created in this tutorial is a simple app of a restaurant's menu, where users may shop items online. In this app any user can see the items of this menu, only identified users may add items to a shopcart and only an Admin user may add new items to the menu.
+The app that is going to be created in this tutorial is a simple app of a restaurant's menu, where users may shop items online. In this app any user can see the items of this menu, only identified users may add items to a shop cart and only an Admin user may add new items to the menu. To keep things simple, we are not going to interact with any external database, nor implement the shop cart functionality.
 
 ## Getting started with Nest
 
@@ -79,10 +79,140 @@ And then you can visit with in your browser the address `localhost:3000` and you
 
 ![Hello world webpage](https://i.imgur.com/RZEZJVw.png "Hello World Webpage")
 
+Let's go back to the structure of the project. In this tutorial, tests are not going to be created (if you want a part 3 of this tutorial creating tests for this application, please comment below) so you may delete the directory `test` and the file `src/app.controller.spec.ts` (which are test related). The remaining files inside the directory `src` are:
+
+  * `app.controller.ts` and `app.service.ts`: those files are responsible for generating the message _Hello world_ when the endpoint `/` is accessed through the browser. Because this endpoint is not important to this application you may delete those files as well (after doing that, the compilation will fail). Soon you are going to learn in more details what are **controllers** and **services**.
+  * `app.module.ts`: this is a class of the type **Module**, it is responsible for declaring imports,exports, controllers and providers to an application. You may create more than one module for more complex applications (more details on [Nest.js documentation](https://docs.nestjs.com/modules)), but the application of this tutorial will have only this main module. 
+  * `main.ts`: is responsible for starting the server.
+  * `main.hrm.ts`: is a file of type [Hot Module Replacement](https://webpack.js.org/concepts/hot-module-replacement/), it installs modules during the server execution and it is useful for a quicker development.
 
 ## Creating endpoints
 
-## Adding validation with Pipes
+The most important endpoint to this app is `/items` because from there, the items of the menu are going to be retrieved and created, so this is the first endpoint that is going to be implemented. First you should create a directory called `items` inside `src` folder, there all the files related to this endpoint are going to be kept. 
+
+### Creating a controller
+
+First, you should create a **controller** for the items called `items.controller.ts`. The responsibility of a controller is map endpoints to functionalities, the controllers are indicated by the decorator `@controller(${ENDPOINT_TO_BE_MAPPED}`. The endpoint `/items` is going to accept two http methods, `get` (to retrieve all the items of the menu, marked with the decorator `@get`) and the endpoint `post` (to create new items, marked with the decorator `@post`). The controller for this is going to look something like that:
+
+```typescript
+import {
+  Get,
+  Post,
+  Body,
+  Controller,
+} from '@nestjs/common';
+
+@Controller('items')
+export class ItemsController {
+
+  @Get()
+  async findAll(): Promise<string[]> {
+    return ["Pizza", "Coke"];
+  }
+
+  @Post()
+  async create() {
+    return "Not yet implemented"
+  }
+}
+```
+
+Then, you should add this controller to `app.module.ts` file. This file is going to look something like that: 
+
+```typescript
+import { Module } from '@nestjs/common';
+import { ItemsController } from './items/items.controller';
+
+@Module({
+  imports: [],
+  controllers: [ItemsController],
+  providers: []
+})
+export class AppModule {}
+```
+
+You may restart the app and access `localhost:3000/items` with your browser and you will get the array `["Pizza", "Coke"]`. 
+
+### Adding a service
+
+Do you agree that in this implementation it would be hard to add a item to this array? Doing that is not a responsibility of a module class, it is a responsibility of a service class (a class that is responsible for serving the module), this kind of class is marked with the decorator `@Injectable`, meaning that they can be injected to other classes. So we are going to create this service class `items.service.ts` that is going to look like the code bellow:
+
+```typescript
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class ItemsService {
+  private readonly items: string[] = ["Pizza", "Coke"];
+
+  findAll(): string[] {
+    return this.items;
+  }
+
+  create(item: string) {
+    this.items.push(item);
+  }
+}
+```
+
+And then you should change the controller class to use this service:
+
+```typescript
+import {
+    Get,
+    Post,
+    Body,
+    Controller,
+  } from '@nestjs/common';
+  import { ItemsService } from './items.service';
+
+  @Controller('items')
+  export class ItemsController {
+
+  constructor(private readonly itemsService: ItemsService) {}
+  
+    @Get()
+    async findAll(): Promise<string[]> {
+      return this.itemsService.findAll();
+    }
+  
+    @Post()
+    async create(@Body('item') item: string) {
+      this.itemsService.create(item);
+    }
+  }
+```
+The decorator `@Body('item')` inside body function means it will return to the function param `item: string` the equivalent to `req.body['item']`.
+
+The class itemsService is injected through `constructor`. The `private readonly` means that the members of `itemsService` are created in the same location.
+
+Now you can add `itemsService` to the `app.modules.ts`:
+
+```typescript
+import { Module } from '@nestjs/common';
+import { ItemsController } from './items/items.controller';
+import { ItemsService } from './items/items.service';
+
+@Module({
+  imports: [],
+  controllers: [ItemsController],
+  providers: [ItemsService]
+})
+export class AppModule {}
+```
+
+With those changes, you can also try to insert a new item to the array using curl:
+
+```bash
+curl --data 'item=salad' localhost:3000/items
+```
+
+And if you get `localhost:3000/items`, you will see the recently added item. Our endpoint to items is functional right now. 
+
+### Creating a simple route for shop cart
+
+## Adding a typescript interface for items
+
+## Adding validation with DTO and Pipes
 
 ## Adding identification with Auth0
 
