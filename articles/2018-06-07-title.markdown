@@ -243,6 +243,63 @@ export class AppModule {}
 
 ## Adding a typescript interface for items
 
+Going back to our items service, imagine that you want to keep more than just the name of the item (for instance, let's keep price too, but maybe you would also want to keep an item code, or something more). Can you agree that maybe an array of strings may not be the most ideal structure to handle this data? 
+
+To solve this problem, you could create an array of objects, but it would be harder to keep a coherence among all items of this array (are all the elements of this array going to be a Item?), so creating a typescript interface is the most recommended way. Inside the directory `/items` create `item.interface.ts`:
+
+```typescript
+export class Item {
+  readonly name: string;
+  readonly price: number;
+}
+```
+
+And then change `items.service.ts` and `items.controller.ts` to use this interface:
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { Item } from './item.interface';
+
+@Injectable()
+export class ItemsService {
+  private readonly items: Item[] = [];
+
+  findAll(): Item[] {
+    return this.items;
+  }
+
+  create(item: Item) {
+    this.items.push(item);
+  }
+}
+```
+```typescript
+import {
+    Get,
+    Post,
+    Body,
+    Controller,
+  } from '@nestjs/common';
+  import { ItemsService } from './items.service';
+  import { Item } from './item.interface';
+
+  @Controller('items')
+  export class ItemsController {
+
+  constructor(private readonly itemsService: ItemsService) {}
+  
+  @Get()
+    async findAll(): Promise<Item[]> {
+      return this.itemsService.findAll();
+    }
+  
+    @Post()
+    async create(@Body('item') item: Item) {
+      this.itemsService.create(item);
+    }
+  }
+```
+
 ## Adding validation with DTO and Pipes
 
 ## Adding identification with Auth0
