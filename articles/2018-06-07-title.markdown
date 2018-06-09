@@ -98,7 +98,6 @@ First, you should create a **controller** for the items called `items.controller
 import {
   Get,
   Post,
-  Body,
   Controller,
 } from '@nestjs/common';
 
@@ -209,6 +208,38 @@ curl --data 'item=salad' localhost:3000/items
 And if you get `localhost:3000/items`, you will see the recently added item. Our endpoint to items is functional right now. 
 
 ### Creating a simple route for shop cart
+
+Now that `/items` is working in a basic way, the endpoint for `/shopcart` is going to be created. Since this functionality is not going to be implemented, it is going to be a simple controller returning text. Create a directory called `shopcart` and inside of it, create `shopcart.controller.ts`
+
+```typescript
+import {
+  Post,
+  Controller,
+} from '@nestjs/common';
+
+@Controller('shopcart')
+export class ShopcartController {
+  @Post()
+  async addItem() {
+    return "This is a fake service :D";
+  }
+}
+```
+And then add this controller to our module.
+
+```typescript
+import { Module } from '@nestjs/common';
+import { ItemsController } from './items/items.controller';
+import { ShopcartController } from './shopcart/shopcart.controller';
+import { ItemsService } from './items/items.service';
+
+@Module({
+  imports: [],
+  controllers: [ItemsController, ShopcartController],
+  providers: [ItemsService]
+})
+export class AppModule {}
+```
 
 ## Adding a typescript interface for items
 
