@@ -399,6 +399,48 @@ If you try to change the value of `price` for example, to `"invalid"` you will g
 
 ## Adding identification with Auth0
 
-### A note about Express/Nest Middlewares
+One of the requirements of this project is that only identified users could add something to the shopcart and only admin users could add a new product, Auth0 is going to be used for this means.
+
+First you have to create a [free Auth0 account](https://auth0.com/signup), then visit the [API tab](https://manage.auth0.com/#/apis) of the Auth0 manager dashboard and create a new API: 
+
+![API configuration](https://i.imgur.com/kl2IpiD.png "API configuration")
+**Important**: the audience should be `http://localhost:3000` (if you choose another one, you will have to change some pieces of code to your chosen address later on) and the signing algorithm **must** be RS256 (if it is another one, the verification method can be quite different).
+
+Then you should visit the [Applications tab](https://manage.auth0.com/#/applications) of your auth0 manager dashboard, and then click on the application with the same name of the just created API (in my case, "menu"), go to settings and change `Application Type` to `single page application` and add `http://localhost:8080/login` (going to be used later on by our front end) to `Allowed Callback URLs`, you must also copy from this page your _Domain_, _Client ID_ and your _Client Secret_ (going to be used later in this). 
+
+![Application configuration](https://screenshotscdn.firefoxusercontent.com/images/b15bfdea-b630-4594-8976-968fce721a9b.png "Application configuration")
+
+Now, you may try to generate an Auth0 access token, that soon is going to be passed to the application in the request's header. To do that, first visit the following address with your browser:
+
+```bash
+https://${YOUR_DOMAIN}/authorize?audience=http://localhost:3000&scope=SCOPE&response_type=code&client_id=${YOUR_CLIENT_ID}&redirect_uri=http://localhost:8080/login&state=STATE?prompt=none
+```
+Obviously, you should change your username and your client id to those retrieved in the past steps. If everything is correct, you should get the following page:
+
+![Auth0 login page](https://screenshotscdn.firefoxusercontent.com/images/c1fcca54-b321-4c1a-9b36-02ff88ee275f.png "Auth0 login page")
+
+Proceed to login as you would do in any Auth0 application (you may create a new account or use your google account, and then you must give your permission to the application to access your account) and then the page will return to the following address: 
+
+```bash 
+http://localhost:8080/login?code=${CODE}&state=${SOME_STATE}
+```
+
+Probably, it will be a white page, but you should copy the value returned to `${CODE}` and do the following in a terminal:
+
+```bash
+curl --request POST \
+  --url 'https://anaribeiro.auth0.com/oauth/token' \
+  -H 'content-type: application/json' \
+  -d '{
+    "grant_type":"authorization_code",
+    "client_id": "${YOUR_CLIENT_ID}",
+    "client_secret": "${YOUR_CLIENT_SECRET}",
+    "code": "${CODE}",
+    "redirect_uri": "http://localhost:8080"
+    }'
+```
+If everything was done right, you will get as the answer of this request a JSON object containing the token, the expiration (86400 seconds or 24 hours) and the token type (bearer). Keep the token for the further calls to our API.
+
+### A note about Express/Nest Middleware
 
 ## Adding role authorization with Auth0
