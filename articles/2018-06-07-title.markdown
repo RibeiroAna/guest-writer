@@ -445,7 +445,7 @@ curl --request POST \
     "redirect_uri": "http://localhost:8080"
     }'
 ```
-If everything was done right, you will get as the answer of this request a JSON object containing the token, the expiration (86400 seconds or 24 hours) and the token type (bearer). In part 2, this process of generating a token is going to be automated by Angular code. Keep the token for the further calls to our API. On the next steps, you are going to learn how to create the code on the API to read this file.
+If everything was done right, you will get as the answer of this request a JSON object containing the token, the expiration (86400 seconds or 24 hours) and the token type (bearer). In part 2, this process of generating a token is going to be automated by Angular code. Keep the token for the further calls to our API. On the next steps, you are going to learn how to create the code on the API to validate this token.
 
 ### A note about express/Nest Middleware
 
@@ -561,10 +561,8 @@ function (user, context, callback) {
   });
 }
 ```
-Now you can redo the process of creating 
 
-
-Then, you should create a guardian that is going to be called `admin.guard.ts` inside the directory `common`. It will be executed after the authentication middleware and will check if in the decoded token there is a field `admin` inside the property `[http://localhost:3000/roles]`. The code should look something like that:
+Then, you should create a Nest guardian that is going to be called `admin.guard.ts` inside the directory `common`. It will be executed after the authentication middleware and will check if in the decoded token there is a field `admin` inside the property `[http://localhost:3000/roles]`. The code should look something like that:
 
 ```typescript
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
