@@ -38,7 +38,7 @@ To keep things simple, you are not going to interact with any external database,
 To install Nest, first you will need to install Node.js (v.8.9.0 +) and NPM, go to [Node.js download](https://nodejs.org/en/download/) website and follow the instructions to download and install Node.js to your operating system (NPM comes with node). When it's done, you can check if everything went well by running the following commands:
 
 ```bash
-Node.js -v # v.8.9.0
+node -v # v.8.9.0
 npm -v # 5.6.0
 ```
 
