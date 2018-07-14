@@ -1,0 +1,35 @@
+---
+layout: post
+title: "TypeScript from Top to Bottom - Part 2: Build a frontend application with Angular"
+description: "Learn how to use TypeScript to create a full-stack web application with Angular and Nest.js"
+date: "2018-07-14 08:30"
+author:
+  name: "Ana Ribeiro"
+  url: "anacosri"
+  mail: "aninhacostaribeiro@gmail.com"
+  avatar: "https://cdn.auth0.com/blog/guest-authors/ana-ribeiro.jpg"
+related:
+- 2017-11-15-an-example-of-all-possible-elements
+---
+
+**TL;DR:** This is a small series on how to build a full-stack TypeScript application using Angular and Nest.js. In the first part, you learnt how to build a simple API with Nest.js. In this second part you are going to learn about the frontend application using Angular. [You can find the final code developed throughout this article in this GitHub repository](https://github.com/auth0-blog/).
+
+## Summarizing part 1
+
+## Set up Angular
+
+## Create a Static Angular App
+### Create an Angular Route to Show List of Items
+### Create a Reactive Angular Form to Add New Items
+
+## Integrating Angular Apps with Auth0
+### Creating an Auth0 Application
+### Installing the Dependencies
+### Create an Angular Component for the Header 
+
+## Integrating Angular with Nest.js
+### Installing the Dependencies
+### Create a Proxy
+### Create Requests with Angular Services
+
+## Conclusion
