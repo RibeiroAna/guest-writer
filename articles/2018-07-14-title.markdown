@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "TypeScript from Top to Bottom - Part 2: Build a frontend application with Angular"
+title: "TypeScript from Top to Bottom - Part 2: Developing a frontend application with Angular 6"
 description: "Learn how to use TypeScript to create a full-stack web application with Angular and Nest.js"
 date: "2018-07-14 08:30"
 author:
@@ -16,14 +16,287 @@ related:
 
 ## Summarizing part 1
 
+In part 1, you learnt why you should use [Angular](https://angular.io/) together [Nest.js](https://nestjs.com/) to create a full stack web Application using Typescript. Then, you created a Nest.js backend application that manages the menu of a restaurant, run this API since you are going to use it in part 2 (the aim of the front end application is to be a web interface that interacts with this API). 
+
+You also created an Auth0 API application, open the settings page of this application and leave this page open as you will need to copy _Domain_ and _Client ID_ to configure your front end application.
+
 ## Set up Angular
 
+Here you are going to use [Angular CLI](https://github.com/angular/angular-cli) to start your application. Since you already installed Node and NPM in part 1, run the following command to install Angular CLI:
+
+```bash
+npm install -g @angular/cli # it will install Angular Cli
+```
+
+And then generate a new project by running the following command:
+
+```bash
+ng new angular-restaurant-front # angular-restaurant-front
+```
+
+After a while, it will generate a project with the following structure:
+
+```bash
+├── README.md
+├── angular.json
+├── package-lock.json
+├── package.json
+├── src
+│   ├── app
+│   │   ├── app.component.css
+│   │   ├── app.component.html
+│   │   ├── app.component.spec.ts
+│   │   ├── app.component.ts
+│   │   └── app.module.ts
+│   ├── assets
+│   ├── browserslist
+│   ├── environments
+│   │   ├── environment.prod.ts
+│   │   └── environment.ts
+│   ├── favicon.ico
+│   ├── index.html
+│   ├── karma.conf.js
+│   ├── main.ts
+│   ├── polyfills.ts
+│   ├── styles.css
+│   ├── test.ts
+│   ├── tsconfig.app.json
+│   ├── tsconfig.spec.json
+│   └── tslint.json
+├── tsconfig.json
+└── tslint.json
+```
+
+The code that you are going to create will be located under the directory `src/app`, those files that have `spec` in their names are related to tests, and are going to be ignored in this tutorial. Detailed meaning of each file in this folder you can find in [Angular's documentation page](https://angular.io/guide/quickstart). To start this application, you must type the following on your terminal:
+
+```bash
+cd angular-restaurant-front # goes to your app's folder
+ng serve --open # starts and open the angular app
+```
+
+After doing that, you will get a page like the following one on [localhost:4200](http://localhost:4200):
+
+![Angular page](https://angular.io/generated/images/guide/cli-quickstart/app-works.png)
+
 ## Create a Static Angular App
-### Create an Angular Route to Show List of Items
+
+First, you are going to create an angular app that doesn't interact with the backend application, and then you are going to add some integration to it.
+
+### Installing dependencies
+
+You are going to use [Twitter's Bootstrap](https://getbootstrap.com/) to give some style to your app (if you don't do that, your app will still work, but in an uglier way). To import bootstrap, go to your application's folder and run the following command:
+
+```bash
+npm install bootstrap
+```
+
+Then open the file `src/styles.css` and add the following line to it:
+
+```css
+@import "bootstrap/dist/css/bootstrap.css";
+```
+
+### Create an Angular Component to Show the Items
+
+First, you are going to create the page where the user will see the items of the menu. First you need to create a component by typing the following command: 
+
+```bash
+ng generate component items
+```
+
+After that you will get a new folder `items` with 3 main files:
+
+  * `items.component.css`: where you may add some local style for item's page;
+  * `items.component.html`: as the name states, where you are going to add HTML code to structure the page;
+  * `items.component.ts`: where you are going to place the logic related to this component.
+
+Copy to this folder the `items.interface.ts` that you have developed in the part one of this tutorial, since the same interface is going to be used for handling data on frontend. Then open the `items.components.ts` and paste the following peace of code to it:
+
+```typescript
+import { Component, OnInit } from '@angular/core';
+import { Item } from './item.interface';
+
+@Component({
+  selector: 'app-items',
+  templateUrl: './items.component.html',
+  styleUrls: ['./items.component.css']
+})
+export class ItemsComponent implements OnInit {
+  items: Item [] = [{
+    name: 'Pizza',
+    price: 3
+  },
+  {
+    name: 'Salad',
+    price: 2
+  }];
+  constructor() { }
+
+  ngOnInit() {
+  }
+}
+
+```
+You are basically creating the items object there. The `@Component` annotation says that this class is a component, its selector says how this component is going to be called in a parent components, template and style are links to html and css files that refers to this component. The method `ngOnInit()` is going to be executed when the page is loading.
+
+Now, you are going to add the code needed in the HTML page. Go to `items.component.html` and add the following code to it:
+
+{% highlight html %}
+<table class="table">
+  <thead>
+    <tr>
+      <td>Name</td>
+      <td>Price</td>
+      <td>Action</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of items"> <!--for every item in object items, create a table row-->
+      <td>{% raw %}{{item.name }}{% endraw %}</td> <!--Write it's name in a column--> 
+      <td>{% raw %}${{item.price}}{% endraw %}</td> <!--Write it's price in a column--> 
+      <td>
+        <button class="btn btn-default">
+          Add to shopping cart
+        </button>
+      </td>
+    </tr> 
+  </tbody>
+</table>
+{% endhighlight %}
+
+The code above is basically a HTML table with Angular directive `*ngFor` for the `<tr>` tag. This element saying that for every item in the object `items` there should be a table row containing columns with the name of the item, it's price and button which is for add this product to a shop cart. 
+
+Now you should call the component you have just created in the `src/app/app.component.html` file, just delete the code automatically generated there and add the following line of code:
+
+{% highlight html %}
+<app-items></app-items>
+{% endhighlight %}
+
+And then visit again [localhost:4200](http://localhost:4200) and if everything was done correctly, you will get a page like the following one:
+ 
+![Table of items](https://screenshotscdn.firefoxusercontent.com/images/b1f3a4fd-2e79-4d04-a158-07e220d8dd1d.png)
+
 ### Create a Reactive Angular Form to Add New Items
 
+Now you are going to create a form to add new items for our `items` object. For that, you are going to use Angular's Reactive form, which creates a object for the form and makes it easy to validate and test the form. To do that, first add Angular's form component to you `app.module.ts` file (this file is used for importing libraries), that will look like that after the addition:
+
+```typescript
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
+
+import { AppComponent } from './app.component';
+import { ItemsComponent } from './items/items.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HeaderComponent } from './header/header.component';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    ItemsComponent,
+    HeaderComponent
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule
+  ],
+  providers: [],
+  bootstrap: [ AppComponent ]
+})
+export class AppModule { }
+```
+Then, you should add some code to your `items.component.ts` (_note_: you could create a new component called something like `itemsform` for that form, but to keep things shorter, everything in this tutorial related to items will be under the same component), there you are going to add a few properties to the class: `itemForm` of the type `formGroup` which is the form itself and `itemSubmitted` a boolean used for validation, you will also need a method for adding new items to the array. After adding that, your code will be like the following one:
+
+```typescript
+import { Component, OnInit } from '@angular/core';
+import { Item } from './item.interface';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+
+@Component({
+  selector: 'app-items',
+  templateUrl: './items.component.html',
+  styleUrls: ['./items.component.css']
+})
+export class ItemsComponent implements OnInit {
+  items: Item [] = [{
+    name: 'Pizza',
+    price: 3
+  },
+  {
+    name: 'Salad',
+    price: 2
+  }];
+  itemSubmitted = false;
+  itemForm: FormGroup;
+
+  constructor(private formBuilder: FormBuilder) { }
+
+  ngOnInit() {
+    // Initiating the form with the fields and the required validators
+    this.itemForm = this.formBuilder.group({
+      name: ['', Validators.required], // Name is required
+      price: ['', [Validators.required, Validators.min(0)]] // Price is required and must be a positive number
+    });
+  }
+
+  get getItemForm() {
+    return this.itemForm.controls;
+  }
+
+  addNewItem() {
+    this.itemSubmitted = true;
+    if (this.itemForm.invalid) {
+      console.log(this.itemForm);
+    } else {
+      this.items.push(this.itemForm.value);
+    }
+  }
+}
+```
+
+Now the file `items.component.html`, there you will add the HTML code that represents the form defined by `itemForm`, to do that add the following code to the bottom of the already existing code:
+
+{% highlight html %}
+...
+<div>
+  <h3 class="col-md-12">Add a new Item</h3>
+  <form class="form-inline" (submit)="addNewItem()" [formGroup]="itemForm">
+    <div class="col-auto">
+      <input type="text" 
+        class="form-control" 
+        placeholder="Name" 
+        formControlName="name" 
+        [ngClass]="{ 'is-invalid': itemSubmitted && getItemForm.name.errors }" >
+        <div *ngIf="itemSubmitted && getItemForm.name.errors" class="invalid-feedback">
+          <div *ngIf="getItemForm.name.errors.required">Name is required</div>
+        </div>
+    </div>
+    <div class="col-auto">
+      <input type="number" 
+        class="form-control" 
+        placeholder="Price" 
+        formControlName="price" 
+        [ngClass]="{ 'is-invalid': itemSubmitted && getItemForm.price.errors }" >
+        <div *ngIf="itemSubmitted && getItemForm.price.errors" class="invalid-feedback">
+          <div *ngIf="getItemForm.price.errors.required">Price is required and must be a number</div>
+          <div *ngIf="getItemForm.price.errors.min">Must start from 0</div>
+        </div>
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary mb-2">Add new item</button>
+    </div>
+  </form>
+</div>
+{% endhighlight %}
+
+Now you can visit [localhost:4200](http://localhost:4200) again and get a page like the following one, you may play around and try to submit valid and invalid values:
+
+![Table with form](https://screenshotscdn.firefoxusercontent.com/images/aaef632a-07c5-499a-ac55-c2d57d4f6408.png)
+
 ## Integrating Angular Apps with Auth0
-### Creating an Auth0 Application
+
 ### Installing the Dependencies
 ### Create an Angular Component for the Header 
 
